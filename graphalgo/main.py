@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/python
 from collections import deque
 
 class Graph:
@@ -23,16 +23,20 @@ class Graph:
         stack   = list([])
         # pushing to the stack
         stack.append(start)
+        # output
+        order = list([])
         # traversal
         while stack:
             curr_v = stack.pop()
             if curr_v in visited:
                 continue
-            # computation
+            order.append(curr_v) #computation
             visited.add(curr_v)
-            neighbours = self.edges[curr_v]
-            for n in neighbours:
-                stack.append(n):
+            neighbors = self.edges[curr_v]
+            for n in neighbors:
+                stack.append(n)
+        # return visited order
+        return order
     
     def bfs(self, start):
         # assert start node is a valid vertex
@@ -41,24 +45,90 @@ class Graph:
         visited = set([])
         # stack for the dfs
         queue   = deque([])
-        # pushing to the stack
+        # pushing to the queue 
         queue.append(start)
+        # output
+        order = list([])
         # traversal
         while queue:
             curr_v = queue.popleft()
             if curr_v in visited:
                 continue
-            #computation
+            order.append(curr_v) #computation
             visited.add(curr_v)
-            neighbours = self.edges[curr_v]
-            for n in neighbours:
+            neighbors = self.edges[curr_v]
+            for n in neighbors:
                 queue.append(n)
+        # return visited order
+        return order
 
+    def visit(self, node, order):
+        if node in self.perm_mark: # reached node with no child visit 
+            return True
+        if node in self.temp_mark: # found a cycle
+            return False
+        self.temp_mark.add(node)
+        neighbors = self.edges[node]
+        for v in neighbors:
+            status = self.visit(v, order) # performing dfs
+            if status is False:
+                return False
+        self.temp_mark.remove(node)
+        self.perm_mark.add(node) 
+        order.appendleft(node) # adding node to the topological order
+        
     def topOrder(self):
-        pass
+        self.perm_mark = set([]) # permanent marking
+        self.temp_mark = set([]) # temporary marking
+        self.no_mark   = list(self.vertices) # unmarked vertices
+        
+        order = deque([]) # topological order
 
+        while self.no_mark:
+            node = self.no_mark.pop()
+            status = self.visit(node, order)
+            if status is False:
+                return None
+        # return the topological order
+        return list(order)
+        
 if __name__ == "__main__":
-    
+    G = Graph()
+    #vertices
+    G.addVertex("A")
+    G.addVertex("B")
+    G.addVertex("C")
+    G.addVertex("D")
+    G.addVertex("E")
+    G.addVertex("F")
+    G.addVertex("G")
+    #edges
+    G.addEdge("A", "B")
+    G.addEdge("A", "C")
+    G.addEdge("B", "D")
+    G.addEdge("B", "E")
+    G.addEdge("C", "F")
+    G.addEdge("C", "G")
+    #dfs
+    print "Depth First Traversal"
+    dfo = G.dfs("A")
+    print dfo
+    #bfs
+    print "Breath First Traversal"
+    bfo = G.bfs("A")
+    print bfo
+    #topological sorting
+    print "Topological Sorting"
+    tpo = G.topOrder()
+    if tpo is None:
+        print "Graph has a cycle"
+    else:
+        print tpo
+
+
+
+
+
 
 
 
