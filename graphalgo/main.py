@@ -65,7 +65,7 @@ class Graph:
     def visit(self, node, order):
         if node in self.perm_mark: # reached node with no child visit 
             return True
-        if node in self.temp_mark: # found a cycle
+        if node in self.temp_mark: # cycle (i.e. detection of back edge) 
             return False
         self.temp_mark.add(node)
         neighbors = self.edges[node]
