@@ -80,15 +80,17 @@ class Graph:
     def topOrder(self):
         self.perm_mark = set([]) # permanent marking
         self.temp_mark = set([]) # temporary marking
-        self.no_mark   = list(self.vertices) # unmarked vertices
+        # unmarked vertices
+        no_mark   = list(self.vertices) 
         
         order = deque([]) # topological order
 
-        while self.no_mark:
-            node = self.no_mark.pop()
+        while no_mark:
+            node = list(no_mark).pop()
             status = self.visit(node, order)
             if status is False:
                 return None
+            no_mark = self.vertices - self.perm_mark - self.temp_mark
         # return the topological order
         return list(order)
         
@@ -105,10 +107,13 @@ if __name__ == "__main__":
     #edges
     G.addEdge("A", "B")
     G.addEdge("A", "C")
+    G.addEdge("B", "C")
     G.addEdge("B", "D")
     G.addEdge("B", "E")
+    G.addEdge("D", "E")
     G.addEdge("C", "F")
     G.addEdge("C", "G")
+    G.addEdge("F", "G")
     #dfs
     print "Depth First Traversal"
     dfo = G.dfs("A")
