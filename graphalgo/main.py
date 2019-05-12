@@ -129,13 +129,3 @@ if __name__ == "__main__":
         print "Graph has a cycle"
     else:
         print tpo
-
-
-
-
-
-
-
-
-
-
